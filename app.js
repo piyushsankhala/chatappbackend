@@ -1,6 +1,9 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import chatRoutes from './src/routes/chat.route.js';
+import userRoutes from './src/routes/use.routes.js';
+import messageRoutes from './src/routes/messages.routes.js';
 
 const app = express();
 
