@@ -1,52 +1,71 @@
 import {Chat} from "../models/chat.models.js";
 import {User} from "../models/user.js";
-const acessorcreateChat = async (req, res) => {
-  const {recieverid} = req.body;
-  if(!recieverid){
-    return res.status(404).json({message :"reciever id is not provided"})
-
-  }
-    if (req.userid === recieverid) {
-        return res.status(400).json({ message: "You cannot create a chat with yourself" });
-    }
-    const reciever = await User.findById(recieverid).select("-password -refreshtoken");
-    if (!reciever) {
-        return res.status(404).json({ message: "Receiver not found" });
-    }
-    const sender = await User.findById(req.userId).select("-password -refreshtoken");
-    if (!sender) {  
-        return res.status(404).json({ message: "Sender not found" });
-    }
-    try {
-        let chat = await Chat.findOne({ users: { $all: [reciever, sender] } });
-        if (chat) {
-            return res.status(200).json({
-                message: "Chat already exists",
-                chat,
-            });
+const createchat = async (req, res) => {
+    try{
+        const { recieverid } = req.body;
+        if (!recieverid) {
+            return res.status(400).json({ message: "Receiver ID is required" });
         }
-        chat = await Chat.create({
-            users: [reciever,sender],
-            messages: [],
+        const senderId = req.user._id;
+        if (!senderId) {
+            return res.status(401).json({ message: "Unauthorized" });   
+        }
+        const sender = await User.findById(senderId);
+        if (!sender) { 
+            return res.status(404).json({ message: "Sender not found" });
+        }
+        const reciever = await User.findById(recieverid);
+        if (!reciever) {
+            return res.status(404).json({ message: "Receiver not found" });
+        }
+        const existingChat = await Chat.findOne({
+            users: { $all: [sender, reciever] }
+        }).populate("users")
+        if(existingChat) {
+            return res.status(200).json({ data: existingChat, recieverid: reciever._id });
+            
+        }
+        const newChat = Chat.create({
+            users: [sender, reciever],   
+            messages: []    
         });
-
-        await chat.populate("users", "-password -refreshtoken").populate("messages");
-        return res.status(201).json({
-            message: "Chat created successfully",
-            chat,
-        });
-    } catch (error) {
-        console.error("Error in createChat:", error);
+        return res.status(201).json({ data: newChat, recieverid: reciever._id });
+    }
+    catch (error) {
+        console.error("Error in fetchchat:", error);
         return res.status(500).json({ message: "Internal server error" });
     }
-
-
-
-
-  
-  
 }
- 
-export { acessorcreateChat };
+
+  const acesschat = async (req, res) => {
+    try {
+        const {recieverid} = req.body
+        const senderId = req.user._id;
+        if (!recieverid) {
+            return res.status(400).json({ message: "Receiver ID is required" });
+        }
+        if (!userId) {
+            return res.status(401).json({ message: "Unauthorized" });
+        }
+        const sender= await User.findById(senderId);
+        const reciever = await User.findById(recieverid);
+        if (!sender) {  
+            return res.status(404).json({ message: "Sender not found" });
+        }
+        if (!reciever) {
+            return res.status(404).json({ message: "Receiver not found" });
+        }
+        const users = [sender._id, reciever._id];
+        const chats = await Chat.find({ users }).populate("users");
+        if (!chats || chats.length === 0) {
+            return res.status(404).json({ message: "No chats found" });
+        }
+        return res.status(200).json({ data: chats });
+    } catch (error) {
+        console.error("Error in acessorcreateChat:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+}
+export { acesschat, createchat  };
 
         

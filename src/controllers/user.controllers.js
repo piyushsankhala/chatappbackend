@@ -2,16 +2,18 @@ import {User} from '../models/user.js';
 
 const registeruser =async(req,res) =>{
     try{
+        
         const {email,password} = req.body;
         if(!email || !password){
-            return res.status(400).json({message: "Please provide all required fields"});
+            return res.status(400).json({success:false , message: "Please provide all required fields"});
         }
-        const existinguser = await user.findone({email});
+        const existinguser = await User.findOne({email});
         if(existinguser){
             return res.status(400).json({message: "User already exists"});
         }
-        const newuser = await user.create({email,password});
+        const newuser = await User.create({email,password});
         return res.status(201).json({
+            success: true,
             message: "User registered successfully",
         }
         )
@@ -31,7 +33,7 @@ const loginuser = async(req,res) =>{
         if(!email || !password){
             return res.status(400).json({message: "Please provide all required fields"});
         }
-        const existinguser = await user.findone({email});
+        const existinguser = await User.findOne({email});
         if(!existinguser){
             return res.status(400).json({message: "User does not exist"});
         }
@@ -41,17 +43,26 @@ const loginuser = async(req,res) =>{
         }
         const accesstoken = await existinguser.getacesstoken();
         const refreshtoken = await existinguser.getrefreshtoken();
+        existinguser.refreshtoken = refreshtoken;
+        await existinguser.save();
         const options = {
             httpOnly : true,
-            secure : true
+            secure : false
 
         }
 
-        return res.status(200).cookie("accesstoken",acesstoken,options).cookie("refreshtoken",refreshtoken,options).json({
+        return res.status(200).cookie("accesstoken",accesstoken,options).cookie("refreshtoken",refreshtoken,options).json({
+            
+                existinguser: {
+                    _id: existinguser._id,
+                    email: existinguser.email,
+                },
+            success: true,
             message: "User logged in successfully",
             accesstoken,
-            refreshtoken
-        });
+            refreshtoken,
+        }
+        )
 
        
 
@@ -90,7 +101,7 @@ const refreshacesstoken = async(req,res) =>{
         if(!refreshtoken){
             return res.status(400).json({message: "Please provide a valid refresh token"});
         }
-        const existinguser = await user.findone({refreshtoken});
+        const existinguser = await User.findOne({refreshtoken});
         if(!existinguser){
             return res.status(400).json({message: "User does not exist"});
         }
@@ -101,10 +112,13 @@ const refreshacesstoken = async(req,res) =>{
         const newrefershtoken = await existinguser.getrefreshtoken();
         existinguser.refreshtoken = newrefershtoken;
         await existinguser.save();
-        const options = {
+       const options = {
             httpOnly: true,
-            secure: true
-        };
+            secure: false, 
+            sameSite: "Lax", 
+            path : "/" 
+       }
+
         return res.status(200).cookie("accesstoken", accesstoken, options)
             .cookie("refreshtoken", newrefershtoken, options)
             .json({
@@ -141,7 +155,7 @@ const refreshacesstoken = async(req,res) =>{
 
 const getallusers = async(req,res) =>{
     try{
-        const users = await user.find().select("-password -refreshtoken");
+        const users = await User.find().select("-password -refreshtoken");
         return res.status(200).json({
             message: "All users retrieved successfully",
             data: users
