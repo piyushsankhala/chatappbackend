@@ -9,7 +9,7 @@ export const authMiddleware = async (req, res, next) => {
             return res.status(401).json({ message: "Unauthorized access" });
         }
 
-        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+        const decoded = jwt.verify(token, "0753c4e002c51ad26c2b8c47b7407e7c");
          req.userId = decoded.id; 
         const user = await User.findById(decoded.id).select("-password -refreshtoken");
 

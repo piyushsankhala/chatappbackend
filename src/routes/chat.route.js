@@ -6,7 +6,7 @@ const router = express.Router();
 
 // All routes are protected with token
 router.post("/acesschat", authMiddleware, acesschat);
-router.post("/acesschat", authMiddleware, createchat);
+router.post("/createchat", authMiddleware, createchat);
 
 
 export default router;

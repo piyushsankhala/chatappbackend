@@ -3,23 +3,23 @@ import { Chat } from "../models/chat.models.js";
 
 export const sendMessage = async (req, res) => {
     try {
-        const { receiverId, content } = req.body;
+        const { recieverId, content } = req.body;
 
-        if (!receiverId || !content) {
+        if (!recieverId || !content) {
             return res.status(400).json({ message: "Receiver ID and content are required" });
         }
 
-        const senderId = req.userId;
+        const senderId = req.user._id
 
-        const chat = await Chat.findOne({ users: { $all: [senderId, receiverId] } });
+        const chat = await Chat.findOne({ users: { $all: [senderId, recieverId] } });
 
         if (!chat) {
             return res.status(404).json({ message: "Chat does not exist" });
         }
 
-        const newMessage = await message.create({
+        const newMessage = await Message.create({
             sender: senderId,
-            receiver: receiverId,
+            reciever : recieverId,
             content,
             chat: chat._id, // optional field in schema if you want
         });
