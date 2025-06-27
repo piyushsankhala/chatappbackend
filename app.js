@@ -11,7 +11,7 @@ dotenv.config();
 const app = express();
 
 app.use(cors({
-    origin: "http://localhost:5174",
+    origin: process.env.cors_origin, // Use the environment variable for the client URL
     credentials: true, // Allow cookies to be sent
 }));
 app.use(cookieParser());

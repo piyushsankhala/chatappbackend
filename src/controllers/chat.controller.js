@@ -1,48 +1,53 @@
 import {Chat} from "../models/chat.models.js";
 import {User} from "../models/user.js";
-const createchat = async (req, res) => {
-    try {
-        console.log("👉 req.user in createchat:", req.user);
-        const { recieverid } = req.body;
-        console.log("📩 Reciever ID:", recieverid);
+import mongoose from "mongoose";
 
-        if (!recieverid) {
-            return res.status(400).json({ message: "Receiver ID is required" });
-        }
+ const createchat = async (req, res) => {
+  try {
+    console.log("🟡 Entered createchat");
 
-        const senderId = req.user?._id;
-        console.log("🧑 Sender ID:", senderId);
+    const { recieverid } = req.body;
+    console.log("📨 Receiver ID:", recieverid);
 
-        const sender = await User.findById(senderId);
-        const reciever = await User.findById(recieverid);
-
-        if (!sender || !reciever) {
-            console.log("❌ Sender or Receiver not found");
-            return res.status(404).json({ message: "Sender or receiver not found" });
-        }
-
-        const existingChat = await Chat.findOne({
-            users: { $all: [sender._id, reciever._id] },
-        }).populate("users");
-
-        if (existingChat) {
-            console.log("💬 Existing chat found");
-            return res.status(200).json({ message: "Chat already exists", data: existingChat });
-        }
-
-        const newChat = await Chat.create({
-            users: [sender._id, reciever._id],
-            messages: [],
-        });
-
-        console.log("✅ New chat created:", newChat._id);
-
-        return res.status(201).json({ data: newChat });
-    } catch (error) {
-        console.error("🔥 Error in createchat:", error.message);
-        console.error(error.stack);
-        return res.status(500).json({ message: "Internal server error" });
+    if (!recieverid) {
+      console.log("❌ Missing receiver ID");
+      return res.status(400).json({ message: "Receiver ID is required" });
     }
+
+    const senderId = req.user?._id;
+    console.log("🧑 Sender ID from token:", senderId);
+
+    if (!senderId) {
+      console.log("❌ senderId is undefined");
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const senderObjectId = new mongoose.Types.ObjectId(senderId);
+    const receiverObjectId = new mongoose.Types.ObjectId(recieverid);
+
+    console.log("✅ Converted to ObjectId");
+
+    const existingChat = await Chat.findOne({
+      users: { $all: [senderObjectId, receiverObjectId] },
+    }).populate("users");
+
+    console.log("📦 Existing chat:", existingChat);
+
+    if (existingChat) {
+      return res.status(200).json({ data: existingChat });
+    }
+
+    const newChat = await Chat.create({
+      users: [senderObjectId, receiverObjectId],
+    });
+
+    console.log("✅ New chat created:", newChat);
+
+    return res.status(201).json({ data: newChat });
+  } catch (error) {
+    console.error("🔥 Caught error in createchat:", error);
+    return res.status(500).json({ message: "Internal Server Error", error: error.message });
+  }
 };
 
 

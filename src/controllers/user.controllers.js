@@ -136,7 +136,7 @@ const refreshacesstoken = async(req,res) =>{
  const currentuser = async(req,res) =>{
     try{
         const userId = req.user._id; // Assuming user is set in req.user by auth middleware
-        const existinguser = await user.findById(userId).select("-password -refreshtoken");
+        const existinguser = await User.findById(userId).select("-password -refreshtoken");
         if (!existinguser) {
             return res.status(404).json({ message: "User not found" });
         }
