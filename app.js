@@ -11,7 +11,7 @@ dotenv.config();
 const app = express();
 
 app.use(cors({
-    origin: process.env.cors_origin, // Use the environment variable for the client URL
+    origin:"https://frontendforchatappbackend.netlify.app", // Use the environment variable for the client URL
     credentials: true, // Allow cookies to be sent
 }));
 app.use(cookieParser());
