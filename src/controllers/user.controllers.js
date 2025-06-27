@@ -114,7 +114,7 @@ const refreshacesstoken = async(req,res) =>{
         await existinguser.save();
        const options = {
             httpOnly: true,
-            secure: false, 
+            secure: true, 
             sameSite: "Lax", 
             path : "/" 
        }
