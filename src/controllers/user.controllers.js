@@ -105,9 +105,7 @@ const refreshacesstoken = async(req,res) =>{
         if(!existinguser){
             return res.status(400).json({message: "User does not exist"});
         }
-        if(refreshtoken!== existinguser.refreshtoken){
-            return res.status(400).json({message: "Invalid refresh token"});
-        }
+       
         const accesstoken = await existinguser.getacesstoken();
         const newrefershtoken = await existinguser.getrefreshtoken();
         existinguser.refreshtoken = newrefershtoken;
