@@ -98,10 +98,13 @@ const logoutuser = async(req,res) =>{
 const refreshacesstoken = async(req,res) =>{
     try{
         const refreshtoken = req.cookies.refreshtoken;
+        console.log("🍪 Cookies:", req.cookies);
+
         if(!refreshtoken){
             return res.status(400).json({message: "Please provide a valid refresh token"});
         }
         const existinguser = await User.findOne({refreshtoken});
+        
         if(!existinguser){
             return res.status(400).json({message: "User does not exist"});
         }
@@ -113,7 +116,7 @@ const refreshacesstoken = async(req,res) =>{
        const options = {
             httpOnly: true,
             secure: true, 
-            sameSite: "Lax", 
+            sameSite: "none",
             path : "/" 
        }
 
