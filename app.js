@@ -11,7 +11,7 @@ dotenv.config();
 const app = express();
 
 app.use(cors({
-    origin:process.env.CORS_ORIGIN, // Use the environment variable for the client URL
+    origin:"https://frontendforchatappbackend.netlify.app", // Use the environment variable for the client URL
     credentials: true, // Allow cookies to be sent
 }));
 app.use(cookieParser());
@@ -28,7 +28,7 @@ app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
