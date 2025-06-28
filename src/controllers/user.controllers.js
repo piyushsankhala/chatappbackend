@@ -82,7 +82,8 @@ const logoutuser = async(req,res) =>{
         const options = {
             httpOnly: true,
             secure: true,
-            expires: new Date(Date.now())
+            expires: new Date(Date.now()),
+            sameSite: "none", // Set to "none" for cross-site cookies
         };
         return res.status(200).clearCookie("accesstoken", options).clearCookie("refreshtoken", options).json({
             message: "User logged out successfully"
