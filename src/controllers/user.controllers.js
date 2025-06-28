@@ -47,7 +47,8 @@ const loginuser = async(req,res) =>{
         await existinguser.save();
         const options = {
             httpOnly : true,
-            secure : true, // Set to true if using HTTPS
+            secure : true,
+            Credentials : true, // Set to true if using HTTPS
 
         }
 
@@ -117,6 +118,7 @@ const refreshacesstoken = async(req,res) =>{
             httpOnly: true,
             secure: true, 
             sameSite: "none",
+            Credentials: true, // Set to true if using HTTPS
         
        }
 
