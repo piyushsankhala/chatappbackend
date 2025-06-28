@@ -48,7 +48,7 @@ const loginuser = async(req,res) =>{
         const options = {
             httpOnly : true,
             secure : true,
-            Credentials : true, // Set to true if using HTTPS
+            sameSite : "none"
 
         }
 
@@ -118,7 +118,7 @@ const refreshacesstoken = async(req,res) =>{
             httpOnly: true,
             secure: true, 
             sameSite: "none",
-            Credentials: true, // Set to true if using HTTPS
+        // Set to true if using HTTPS
         
        }
 
