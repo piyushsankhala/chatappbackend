@@ -82,9 +82,10 @@ const logoutuser = async(req,res) =>{
         const options = {
             httpOnly: true,
             secure: true,
-            expires: new Date(Date.now()),
-            sameSite: "none", // Set to "none" for cross-site cookies
-        };
+            sameSite: "None", // ✅ Correct casing
+            path: "/",         // ✅ Must match set cookie
+     };
+
         return res.status(200).clearCookie("accesstoken", options).clearCookie("refreshtoken", options).json({
             message: "User logged out successfully"
         });
@@ -115,13 +116,13 @@ const refreshacesstoken = async(req,res) =>{
         const newrefershtoken = await existinguser.getrefreshtoken();
         existinguser.refreshtoken = newrefershtoken;
         await existinguser.save();
-       const options = {
-            httpOnly: true,
-            secure: true, 
-            sameSite: "none",
-        // Set to true if using HTTPS
-        
-       }
+        const options = {
+                httpOnly: true,
+                secure: true,
+                sameSite: "None", // ✅ Correct casing
+                path: "/",         // ✅ Must match set cookie
+        };
+
 
         return res.status(200).cookie("accesstoken", accesstoken, options)
             .cookie("refreshtoken", newrefershtoken, options)
