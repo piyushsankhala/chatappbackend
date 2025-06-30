@@ -9,7 +9,11 @@ const sendotp = async (req, res) => {
             return res.status(400).json({ success: false, message: "Please provide an email address" });
         }
 
+<<<<<<< HEAD
        
+=======
+        
+>>>>>>> 43687a21dfc9a858f5922b6e06c3654d6ad674ab
 
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // OTP valid for 10 minutes
@@ -71,6 +75,10 @@ const verifyotp = async (req, res) => {
         return res.status(500).json({ success: false, message: "Internal server error" });
     }
 }
+<<<<<<< HEAD
 export { sendotp, verifyotp };
+=======
+export {sendotp , verifyotp}
+>>>>>>> 43687a21dfc9a858f5922b6e06c3654d6ad674ab
 
 
