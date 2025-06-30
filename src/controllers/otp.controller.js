@@ -9,10 +9,7 @@ const sendotp = async (req, res) => {
             return res.status(400).json({ success: false, message: "Please provide an email address" });
         }
 
-        const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(404).json({ success: false, message: "User not found" });
-        }
+        
 
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // OTP valid for 10 minutes
