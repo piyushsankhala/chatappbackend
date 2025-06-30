@@ -13,9 +13,10 @@ const otpschema = new mongoose.Schema({
     },
 }, { timestamps: true });
 
-otpschema.methods.isvalid = async function(otp) {
-    return await bcrypt.compare(this.otp , otp)
-}
+otpschema.methods.isvalid = function(inputOtp) {
+    return this.otp === inputOtp;
+};
+
 
 export const Otp = mongoose.model("Otp",otpschema )
 
