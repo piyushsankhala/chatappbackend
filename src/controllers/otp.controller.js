@@ -19,6 +19,7 @@ const sendotp = async (req, res) => {
         const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // OTP valid for 10 minutes
 
         const newOtp = await Otp.create({
+            email,
             
             otp,
             expiresAt,
@@ -57,7 +58,7 @@ const verifyotp = async (req, res) => {
         }
 
 
-        const otpRecord = await Otp.findOne({ otp }).sort({ createdAt: -1 });
+        const otpRecord = await Otp.findOne({ email}).sort({ createdAt: -1 });
         if (!otpRecord || otpRecord.expiresAt < new Date()) {
             return res.status(400).json({ success: false, message: "OTP expired or not found" });
         }
