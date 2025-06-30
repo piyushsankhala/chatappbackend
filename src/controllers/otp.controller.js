@@ -9,16 +9,13 @@ const sendotp = async (req, res) => {
             return res.status(400).json({ success: false, message: "Please provide an email address" });
         }
 
-        const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(404).json({ success: false, message: "User not found" });
-        }
+       
 
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // OTP valid for 10 minutes
 
         const newOtp = await Otp.create({
-            user: user._id,
+            
             otp,
             expiresAt,
         });
@@ -55,12 +52,8 @@ const verifyotp = async (req, res) => {
             return res.status(400).json({ success: false, message: "Please provide email and OTP" });
         }
 
-        const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(404).json({ success: false, message: "User not found" });
-        }
 
-        const otpRecord = await Otp.findOne({ user: user._id }).sort({ createdAt: -1 });
+        const otpRecord = await Otp.findOne({ otp }).sort({ createdAt: -1 });
         if (!otpRecord || otpRecord.expiresAt < new Date()) {
             return res.status(400).json({ success: false, message: "OTP expired or not found" });
         }
@@ -78,5 +71,6 @@ const verifyotp = async (req, res) => {
         return res.status(500).json({ success: false, message: "Internal server error" });
     }
 }
+export { sendotp, verifyotp };
 
 
