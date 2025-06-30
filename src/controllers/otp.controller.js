@@ -8,6 +8,10 @@ const sendotp = async (req, res) => {
         if (!email) {
             return res.status(400).json({ success: false, message: "Please provide an email address" });
         }
+        const user =await User.findOne({ email });
+        if (user) {
+            return res.status(400).json({ success: false, message: "User already exists with this email" });
+        }
 
        
 
