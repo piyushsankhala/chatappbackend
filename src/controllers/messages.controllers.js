@@ -24,13 +24,9 @@ export const sendMessage = async (req, res) => {
             chat: chat._id, // optional field in schema if you want
         });
 
-        await Chat.findByIdAndUpdate(chat._id, {
-            $push: { messages: newMessage._id },
-            $set: { updatedAt: new Date() },
-        });
-        chat.set("messageindicator", true);
+        chat.messages.push(newMessage._id);
+        chat.messageindicator = true;
         await chat.save();
-
         return res.status(201).json({
             message: "Message sent successfully",
             data: newMessage
