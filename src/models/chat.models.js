@@ -15,6 +15,13 @@ const chatSchema = new mongoose.Schema({
             ref: "Message",
         },
     ],
+    messageindicator : {
+        type : Boolean,
+        default : false,
+        
+    }
     }, { timestamps: true });
+
+   
 
     export const Chat = mongoose.model("Chat", chatSchema);

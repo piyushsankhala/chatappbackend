@@ -28,6 +28,7 @@ export const sendMessage = async (req, res) => {
             $push: { messages: newMessage._id },
             $set: { updatedAt: new Date() },
         });
+        chat.set("messageindicator", true);
 
         return res.status(201).json({
             message: "Message sent successfully",

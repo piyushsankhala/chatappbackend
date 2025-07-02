@@ -158,17 +158,34 @@ const refreshacesstoken = async(req,res) =>{
     }   
 }
 
-const getallusers = async(req,res) =>{
-    try{
-        const users = await User.find().select("-password -refreshtoken");
-        return res.status(200).json({
-            message: "All users retrieved successfully",
-            data: users
+const getallusers = async (req, res) => {
+  try {
+    const currentUserId = req.user._id;
+
+    const allUsers = await User.find({ _id: { $ne: currentUserId } }).select("-password -refreshtoken");
+
+    const usersWithChatInfo = await Promise.all(
+      allUsers.map(async (user) => {
+        const chat = await Chat.findOne({
+          users: { $all: [currentUserId, user._id] },
         });
-    }
-    catch(error){
-        console.error("Error in getallusers:", error);
-        return res.status(500).json({message: "Internal server error"});
-    }
-}   
+
+        return {
+          _id: user._id,
+          email: user.email,
+          messageindicator: chat?.messageindicator || false,
+        };
+      })
+    );
+
+    return res.status(200).json({
+      message: "All users with chat info retrieved",
+      data: usersWithChatInfo,
+    });
+  } catch (error) {
+    console.error("Error in getallusers:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 export { registeruser, loginuser, logoutuser, refreshacesstoken, currentuser , getallusers };
