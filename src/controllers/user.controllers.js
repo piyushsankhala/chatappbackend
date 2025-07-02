@@ -1,4 +1,6 @@
 import {User} from '../models/user.js';
+import {Chat} from '../models/chat.models.js';
+import mongoose from 'mongoose';
 
 const registeruser =async(req,res) =>{
     try{
