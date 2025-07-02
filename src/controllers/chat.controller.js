@@ -73,6 +73,8 @@ import mongoose from "mongoose";
       const chats = await Chat.findOne({ users: { $all: [sender._id, reciever._id] } }).populate("users").populate("messages")
       chats.set("messageindicator", false);
       await chats.save();
+      console.log("Indicator after set:", Chat.messageindicator);
+
 
         if (!chats || chats.length === 0) {
             return res.status(404).json({ message: "No chats found" });
