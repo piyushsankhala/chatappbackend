@@ -25,8 +25,11 @@ export const sendMessage = async (req, res) => {
         });
 
         chat.messages.push(newMessage._id);
-        chat.messageindicator = true;
+        
         await chat.save();
+        const sender = await User.findById(senderId);
+        sender.messageindicator = true; 
+        await sender.save();
         return res.status(201).json({
             message: "Message sent successfully",
             data: newMessage

@@ -71,9 +71,8 @@ import mongoose from "mongoose";
         }
         const users = [sender, reciever];
       const chats = await Chat.findOne({ users: { $all: [sender._id, reciever._id] } }).populate("users").populate("messages")
-      chats.set("messageindicator", false);
-      await chats.save();
-      console.log("Indicator after set:", Chat.messageindicator);
+      sender.messageindicator = false;
+      await sender.save();
 
 
         if (!chats || chats.length === 0) {

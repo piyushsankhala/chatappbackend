@@ -166,23 +166,11 @@ const getallusers = async (req, res) => {
 
     const allUsers = await User.find({ _id: { $ne: currentUserId } }).select("-password -refreshtoken");
 
-    const usersWithChatInfo = await Promise.all(
-      allUsers.map(async (user) => {
-        const chat = await Chat.findOne({
-          users: { $all: [currentUserId, user._id] },
-        });
-
-        return {
-          _id: user._id,
-          email: user.email,
-          messageindicator: chat?.messageindicator || false,
-        };
-      })
-    );
+    
 
     return res.status(200).json({
       message: "All users with chat info retrieved",
-      data: usersWithChatInfo,
+      data: allUsers,
     });
   } catch (error) {
     console.error("Error in getallusers:", error);
