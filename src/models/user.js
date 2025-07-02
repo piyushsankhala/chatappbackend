@@ -20,11 +20,6 @@ const userschema = new Schema({
 
         type : String,
         default : null,
-    },
-    messageindicator : {
-        type : Boolean,
-        default : false,
-        
     }
 
 },

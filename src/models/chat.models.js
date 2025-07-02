@@ -15,7 +15,13 @@ const chatSchema = new mongoose.Schema({
             ref: "Message",
         },
     ],
-    
+   messageIndicators: {
+        type: Map,
+        of: Boolean,
+        default: {},
+    },
+
+
     }, { timestamps: true });
 
    

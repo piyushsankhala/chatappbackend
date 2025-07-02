@@ -1,6 +1,5 @@
 import { Message } from "../models/messages.model.js";
 import { Chat } from "../models/chat.models.js";
-import { User } from "../models/user.js";
 
 export const sendMessage = async (req, res) => {
     try {
@@ -26,11 +25,10 @@ export const sendMessage = async (req, res) => {
         });
 
         chat.messages.push(newMessage._id);
-        
+       chat.messageIndicators.set(recieverId.toString(), true);
+
+
         await chat.save();
-        const sender = await User.findById(senderId);
-        sender.messageindicator = true; 
-        await sender.save();
         return res.status(201).json({
             message: "Message sent successfully",
             data: newMessage

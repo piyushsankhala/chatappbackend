@@ -162,15 +162,28 @@ const refreshacesstoken = async(req,res) =>{
 
 const getallusers = async (req, res) => {
   try {
-    const currentUserId = req.user._id;
+    const currentUserId = req.user._id.toString();
 
+    // Fetch all users except current
     const allUsers = await User.find({ _id: { $ne: currentUserId } }).select("-password -refreshtoken");
 
-    
+    const usersWithIndicators = await Promise.all(
+      allUsers.map(async (user) => {
+        const chat = await Chat.findOne({
+          users: { $all: [currentUserId, user._id.toString()] },
+        });
+
+        return {
+          _id: user._id,
+          email: user.email,
+          messageindicator: chat?.messageIndicators?.get(currentUserId) || false,
+        };
+      })
+    );
 
     return res.status(200).json({
       message: "All users with chat info retrieved",
-      data: allUsers,
+      data: usersWithIndicators,
     });
   } catch (error) {
     console.error("Error in getallusers:", error);
