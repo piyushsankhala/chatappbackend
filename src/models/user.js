@@ -45,13 +45,13 @@ userschema.methods.ispasswordvalid = async function(password){
 }
 
 userschema.methods.getrefreshtoken = async function(){
-    return jwt.sign({id : this._id},process.env.ACCESS_TOKEN_SECRET, {
+    return jwt.sign({id : this._id},process.env.REFRESH_TOKEN_SECRET, {
         expiresIn : "7d"
     });
 
 }
 userschema.methods.getacesstoken = async function(){
-    return jwt.sign({id : this._id},process.env.REFRESH_TOKEN_SECRET, {
+    return jwt.sign({id : this._id},process.env.ACCESS_TOKEN_SECRET, {
         expiresIn : "1d"
     });
 }
